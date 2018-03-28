@@ -1,0 +1,121 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Methodology}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+To generate the wave profile that produces the largest likely response of the WEC device, the RAO is calculated using linear WEC-Sim for each of the degrees of freedom of interest. The RAO is then combined with the Brettschneider spectrum, which corresponds to each of the five extreme wave environments listed in Tab.~\ref{table:100yearContour}, using the MLER method to produce the underlying wave profile that leads to the largest response in each degree of freedom. The resulting wave profile is then used in nonlinear WEC-Sim and high-fidelity URANS simulations to fully model the system's nonlinear hydrodynamics. This section describes all the numerical methods used in the study, including the MLER, WEC-Sim, and URANS methods.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Design Load Analysis Framework}
+Although high-fidelity computational fluid dynamics (CFD) methods have become available for design application because of the rapid development of high-performance computing technology, the application of CFD is still relatively uncommon because of the prohibitive computational time needed to simulate all the necessary cases. Therefore, ship designers and the wind energy industry often use a modeling approach that first identifies the likely extreme loading scenarios using a simple low/midfidelity method and then investigates those scenarios by using CFD simulations or experimental wave tank tests, as shown in Fig. \ref{fig:framework}.
+
+%%%%%%%%%%%%%%%% begin figure %%%%%%%%%%%%%%%%%%%
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[width=0.95\textwidth]{./Figures/framework.png}
+\end{center}
+\caption{ECM design load analysis framework.}
+\label{fig:framework}
+\end{figure}
+%%%%%%%%%%%%%%%% end figure %%%%%%%%%%%%%%%%%%% 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Most Likely Extreme Response}
+The MLER method uses the linear RAO of the device and the spectrum for the sea state of interest to produce a wave profile that gives the largest response. Because it uses linear theory, the underlying assumption is that the higher-order effects are small in comparison to the linear effects.
+Starting with a wave time series described by 
+\begin{equation}
+   Z(t) = \sum_{n=1}^N a_{z,n} \left[ V_n \cos\left(\omega_n t - k_n x\right) + W_n \sin\left(\omega_n t - k_n x\right) \right],
+\label{eq:drummen1}
+\end{equation}
+where $a_{z,n}$ is the spectral amplitude, $\sqrt{S(\omega_n)~\Delta\omega}$, and the coefficients $V_n$ and $W_n$ are independent standard normal random variables containing white Gaussian noise and phase randomization.  
+The corresponding response can be written as
+\begin{align}
+%\begin{aligned}
+   \zeta(t) = &\sum_{n=1}^N a_{z,n} \left|\Phi_{\text{\tiny{R}},n}\right| 
+            \left[V_n \cos\left(\omega_n t - k_n x + \theta_{\text{\tiny{R}},n}\right)\right.\nonumber\\
+            &\qquad\qquad\left.+ W_n \sin\left(\omega_n t - k_n x + \theta_{\text{\tiny{R}},n}\right) \right]
+%\end{aligned}
+\label{eq:drummen7}
+\end{align}
+where $\left|\Phi_{\text{\tiny{R}},n}\right|$ and $\theta_{\text{\tiny{R}},n}$ are the RAO magnitude and phase angle, respectively.
+
+The incident wave profile that yields the largest response of the floating body can then be derived using information from the wave spectrum and the response spectrum to replace the values of $V_n$ and $W_n$.  The response spectrum is calculated by combining the wave spectrum with the RAO of the body as
+\begin{equation}
+S_{\text{\tiny{R}}}(\omega_n) = \left| \Phi_{\text{\tiny{R}}}(\omega_n) \right| ^2 S(\omega_n)
+\label{eq:S_RAO}
+\end{equation}
+where $\Phi_R(\omega_n)$ is the RAO for a given degree of freedom.
+Using this information and the derivations presented in Dietz~\cite{Dietz2004} and Drummen~\cite{Drummen2008}, a set of equations are derived by way of a Slepian process to describe the reaction of a vessel to an incoming wave train.  This yields a set of equations that describe the maximum response of the vessel conditioned by the RAO.  New values for $V_n$ and $W_n$ conditioned with the vessel response spectrum are given as
+\begin{align}
+\overline{V}_{\text{\tiny{R}},n} = 
+        &\left|\Phi_{\text{\tiny{R}},n}\right| M_d a_{z,n} 
+               \frac{\cos(\theta_{\text{\tiny{R}},n})}{\left(m_2 m_0 -m_1^2\right)}\nonumber\\
+        &\qquad\times\left[ \left(m_2 - \omega_n m_1 \right) + \overline{\omega}_{\text{\tiny{R}}} \left( \omega_n m_0 - m_1 \right) \right]\label{eq:drummen23_rev}\\
+\overline{W}_{\text{\tiny{R}},n} = 
+		&\left|\Phi_{\text{\tiny{R}},n}\right| M_d a_{z,n}
+               \frac{\sin(\theta_{\text{\tiny{R}},n})}{\left(m_2 m_0 -m_1^2\right)}\nonumber\\
+        &\qquad\times\left[ \left(m_2 - \omega_n m_1 \right) + \overline{\omega}_{\text{\tiny{R}}} \left( \omega_n m_0 - m_1 \right) \right]\label{eq:drummen24_rev}
+\end{align}
+where $M_d$ is the desired response amplitude, $\overline{\omega}_{\text{\tiny{R}}} = m_1/m_0$ of the response spectrum, and the response spectral amplitude defined as $a_{\text{\tiny{R}},n} \equiv \left|\Phi_{\text{\tiny{R}},n}\right| a_{z,n}$.  The spectral moments of the response, $m_0$, $m_1$, and $m_2$, are given by 
+\begin{equation}
+m_i = \sum_{n=1}^{N} \omega_n^i S_{\text{\tiny{R}}}(\omega_n) \Delta\omega \qquad \text{where} \quad i = 0, 1, 2, 3, \ldots
+\label{eq:spect_mom}
+\end{equation}
+
+Replacing $V_n$ and $W_n$ in Eqn.~(\ref{eq:drummen1}) with Eqns.~(\ref{eq:drummen23_rev}) and~(\ref{eq:drummen24_rev}), and simplifying significantly, yields the underlying wave profile that will produce the largest response
+\begin{align}
+Z_{\text{\tiny{R}},c}(t) = \sum_{n=1}^N a_{z,n}
+              M_d A_{\text{\tiny{R}},n} \cos\left(\omega_n t - k_n x - \theta_{\text{\tiny{R}},n}\right)
+\label{eq:MLER_wave}
+\end{align}
+where 
+\begin{equation}
+A_{\text{\tiny{R}},n} \equiv \frac{\left|\Phi_{\text{\tiny{R}},n}\right| a_{z,n}}{m_0 m_2 - m_1^2} 
+   \left[\left( m_2 - m_1 \omega_n \right) + \overline{\omega}_{\text{\tiny{R}}} \left(m_0 \omega_n - m_1 \right)\right]
+\label{eq:A_Rn}
+\end{equation}
+The corresponding response from Eqn.~(\ref{eq:drummen7}) becomes
+\begin{equation}
+\zeta_{\text{\tiny{R}},c}(t) = \sum_{n=1}^N M_d a_{z,n} \left|\Phi_{\text{\tiny{R}},n}\right| 
+                                    A_{\text{\tiny{R}},n} \cos\left(\omega_n t - k_n x\right)
+\label{eq:MLER_response}
+\end{equation}
+Note that the phase term present in the wave profile of Eqn.~(\ref{eq:MLER_wave}) is perfectly canceled out by the RAO phase giving a maximum response amplitude at $t=0$.  It is important to note that this method produces a shaped wave profile that is independent of the desired magnitude of the response, $M_d$. Therefore, it can be rescaled to waves of different amplitudes for the purposes of generating short-term statistical loads.  In this case, the peak values of the underlying wave amplitudes from Eqn.~(\ref{eq:MLER_wave}) were rescaled to simulate the maximum 100-year individual wave height, H$_{100}$, for the starting sea state, which is most likely 1.9 times the significant wave height for the 100-year wave given in Tab.~\ref{table:100yearContour}, assuming a storm lasts for 3 hours with 1000 waves  \cite{DetNorskeVeritas2010a}.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{URANS Simulations}
+A finite-volume URANS solver, StarCCM+ \cite{CD-adapco2014a}, was used to simulate focused waves defined by the MLER approach and model the body system's dynamic response. The method discretizes the time-accurate Navier-Stokes equations of motion over the computational domain and solves the system of linear equations in the time domain. This solver and numerical model were successfully applied previously for a heaving device in extreme regular waves~\cite{Yu2015}. The numerical settings used in this study are listed in Tab.~\ref{table:cfd_params}. For simplicity, turbulence modeling was not employed and the fluid flow was assumed to be laminar. An overset methodology was applied to simulate device motion wherein two layers of meshes were implemented, one for the floating body subject to kinematic constraints and a second for simulating the background wave field. The two meshes are solved simultaneously to capture unsteady wave-body interactions. \Cref{fig:mesh} illustrates the present overset configuration. The stationary background mesh cells have been colored as inactive (cell type=-1), no solution performed; active (0), solution performed at each time step; donors (1), active, and provides a solution to the moving mesh; intermediate (2); and receptors (3), active, and receiving a solution from the moving mesh.  
+
+%%%%%%%%%%%%%%% begin table   %%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{table}[htbp]
+\caption{URANS Numerical Settings.}
+\begin{center}
+\label{table:cfd_params}
+\begin{tabular}{l l}
+\hline
+\textbf{Pressure-velocity coupling} & Transient SIMPLE algorithm\\
+\textbf{Time-marching scheme} & Second-order implicit \\
+\textbf{Convection scheme} & Second-order upwind \\
+\textbf{Free surface capturing} & Volume of fluid model\\
+\textbf{Wave absorber} & Sponge-layer damping zone \\
+\textbf{Device motion} & Overset scheme \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+%%%%%%%%%%%%%%%% end table %%%%%%%%%%%%%%%%%%% 
+
+%%%%%%%%%%%%%%%% begin figure %%%%%%%%%%%%%%%%%%%
+\begin{figure}[!t]
+\begin{center}
+\includegraphics[width=0.65\textwidth]{./Figures/overset_mesh.png}
+\end{center}
+\caption{Overset mesh configuration.}
+\label{fig:mesh}
+\end{figure}
+%%%%%%%%%%%%%%%% end figure %%%%%%%%%%%%%%%%%%% 
+
+In the case of a focused wave, a single reference length (e.g., the wavelength) is not well defined. For this work, a characteristic length ($L$) was chosen as the wavelength of the largest amplitude wave in the wave train, which has a frequency corresponding to the peak period. 
+Spatial resolution near the water surface is 80 cells per $L$ in the downwave direction ($N_x=80$) and 10 cells per $H_s$ in the normal direction ($N_z=10$). This resulted in an aspect ratio of 4 (Fig.~\ref{fig:mesh}), and additional refinement was not performed in the normal direction to keep the aspect ratio $\sim$O(1). Grid resolution near the device was set to 0.25 m, providing approximately 100 points along a surface cross-sectional curve. A water depth ($d$) of 70 m was modeled. To absorb outgoing and reflected waves without generating additional numerical disturbances, a 1.5 $L$-long damping zone was also included. The entire computational domain extended from -600 m to 600+1.5$L$ m in the downwave ($x$) direction, from -$L$/2 to $L$/2 in the lateral ($y$) direction, and from $-d$ to $d$ in the normal direction. 
+
+The MLER wave spectra were specified as components of a linear superposition wave on the inflow boundary and used to initialize the solution on the interior of the computational domain. Time marching is performed with a second-order algorithm and a relatively small time-step size chosen to minimize temporal error. Using the reference length $L$ and the peak period $T_p$, a reference wave speed ($U$) is obtained. An estimate of the maximum Courant number is therefore provided by $C = U \Delta t/\Delta x = (L\Delta t)/(T_p \Delta x)$ and a time-step size is selected to achieve $C \le 0.25$. For this case, $\Delta t=0.02$ was chosen for an estimated $C \approx 0.12$, or 15,000 steps per $T_p$.

@@ -1,0 +1,58 @@
+% This file demonstrates the use of the `NRELarticle` style file
+% ---------------
+% PREAMBLE
+% ---------------
+\documentclass[tagged]{NRELarticle}
+\usepackage{multirow}% http://ctan.org/pkg/multirow
+\usepackage{cleveref}
+\usepackage{float}
+\usepackage{ragged2e}
+\usepackage{authblk}
+
+% -----------------------------------
+% DOCUMENT PROPERTIES
+% -----------------------------------
+\title{Review on WEC Design Practice and Methods for Design Load Case analysis}
+% \author{Y.-H. Yu, R. G. Coe, and J. van Rij}
+% \address{%
+% $^{1}$ \quad National Renewable Energy Laboratory, Golden CO, USA; yi-hsiang.yu@nrel.gov\\}
+\author[1]{J. van Rij}
+\author[2]{R. G. Coe}
+\author[1]{Y.-H. Yu}
+\affil[1]{National Renewable Energy Laboratory}
+\affil[2]{Sandia National Laboratories}
+
+\addbibresource{files/bibliography.bib}
+\setcounter{tocdepth}{1}
+\date{2018-03-31}
+% need to remove
+% -------------------------------------
+% DOCUMENT STARTS HERE
+% -------------------------------------
+\begin{document}
+\justify
+\lstset{language=[LaTeX]Tex,columns=fullflexible,keepspaces=true,breaklines=true}
+%\tableofcontents
+% \listoffigures
+% \listoftables
+
+
+%% CHAPTER: Introduction
+\input{files/Intro}
+\input{files/Review}
+\input{files/DLC}
+\input{files/Summary}
+%% CHAPTER: HOW TO MAKE NREL LATEX DOCUMENTS %%
+%\input{files/Methodology}
+%% CHAPTER: Case Study %%
+%\input{files/CaseStudy}
+
+% bibliography
+\label{sec:Bib}
+\printbibliography
+
+%\appendix
+%\input{files/AppendixA}
+%\input{files/AppendixB}
+
+\end{document}
